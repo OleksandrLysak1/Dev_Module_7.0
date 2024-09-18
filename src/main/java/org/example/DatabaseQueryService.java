@@ -1,14 +1,20 @@
 package org.example;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseQueryService {
+
     private final Database database;
 
     public DatabaseQueryService() {
-        this.database = new Database();
+
+        this.database = Database.getInstance();
     }
 
     public List<MaxProjectCountClient> findMaxProjectsClient() {
@@ -30,11 +36,8 @@ public class DatabaseQueryService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exception
         }
 
         return clients;
     }
-
-    // Add other query methods similarly
 }

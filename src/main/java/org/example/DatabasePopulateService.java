@@ -13,7 +13,8 @@ public class DatabasePopulateService {
         Connection connection = database.getConnection();
 
         try {
-            String sql = new String(Files.readAllBytes(Paths.get("sql/populate_db.sql")));
+
+            String sql = new String(Files.readAllBytes(Paths.get("src/main/resources/sql/populate_db.sql")));
             try (Statement statement = connection.createStatement()) {
                 statement.execute(sql);
             }
