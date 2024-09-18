@@ -1,16 +1,16 @@
 package org.example;
 
 public class MaxProjectCountClient {
-    private final int clientId;
+    private final String name;
     private final int projectCount;
 
-    public MaxProjectCountClient(int clientId, int projectCount) {
-        this.clientId = clientId;
+    public MaxProjectCountClient(String name, int projectCount) {
+        this.name = name;
         this.projectCount = projectCount;
     }
 
-    public int getClientId() {
-        return clientId;
+    public String getName() {
+        return name;
     }
 
     public int getProjectCount() {
@@ -20,7 +20,7 @@ public class MaxProjectCountClient {
     @Override
     public String toString() {
         return "MaxProjectCountClient{" +
-                "clientId=" + clientId +
+                "name='" + name + '\'' +
                 ", projectCount=" + projectCount +
                 '}';
     }

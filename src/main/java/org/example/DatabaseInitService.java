@@ -13,7 +13,8 @@ public class DatabaseInitService {
         Connection connection = database.getConnection();
 
         try {
-            String sql = new String(Files.readAllBytes(Paths.get("sql/init_db.sql")));
+
+            String sql = new String(Files.readAllBytes(Paths.get("src/main/resources/sql/init_db.sql")));
             try (Statement statement = connection.createStatement()) {
                 statement.execute(sql);
             }

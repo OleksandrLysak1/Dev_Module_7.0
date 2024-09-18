@@ -8,9 +8,8 @@ public class Database {
     private static Database instance;
     private Connection connection;
 
-    Database() {
+    public Database() {
         try {
-
             connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
         } catch (SQLException e) {
             e.printStackTrace();
