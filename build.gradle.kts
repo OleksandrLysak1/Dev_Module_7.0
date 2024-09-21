@@ -23,8 +23,9 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(21)  // Зміни версію на 20
 }
+
 
 application {
     mainClass.set("org.example.Main")
