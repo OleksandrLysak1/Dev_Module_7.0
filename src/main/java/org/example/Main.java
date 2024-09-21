@@ -5,6 +5,7 @@ public class Main {
         System.out.println("Hello world!");
 
         DatabaseQueryService queryService = new DatabaseQueryService();
-        System.out.println(queryService.findMaxProjectsClient());
+        MaxProjectCountClient maxClient = queryService.findMaxProjectsClient();
+        System.out.println(maxClient != null ? maxClient : "No clients found.");
     }
 }

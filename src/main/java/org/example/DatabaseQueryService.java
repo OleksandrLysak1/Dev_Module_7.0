@@ -1,48 +1,99 @@
 package org.example;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseQueryService {
+    private static final String DB_URL = "jdbc:h2:~/MyDB";
+    private static final String USER = "sa";
+    private static final String PASSWORD = "";
 
-    private final Database database;
-
-    public DatabaseQueryService() {
-        this.database = Database.getInstance();
+    // Отримання всіх користувачів
+    public List<User> getAllUsers() {
+        String query = "SELECT * FROM Users";
+        return executeUserQuery(query);
     }
 
-    public List<MaxProjectCountClient> findMaxProjectsClient() {
-        List<MaxProjectCountClient> clients = new ArrayList<>();
-        String query = "SELECT c.NAME, COUNT(p.ID) AS PROJECT_COUNT " +
-                "FROM client c " +
-                "JOIN project p ON c.ID = p.CLIENT_ID " +
-                "GROUP BY c.NAME " +
-                "HAVING PROJECT_COUNT = (" +
-                "    SELECT MAX(project_count) " +
-                "    FROM (" +
-                "        SELECT COUNT(ID) AS project_count " +
-                "        FROM project " +
-                "        GROUP BY CLIENT_ID" +
-                "    ) AS temp" +
-                ")";
-
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String name = resultSet.getString("NAME");
-                int projectCount = resultSet.getInt("PROJECT_COUNT");
-                clients.add(new MaxProjectCountClient(name, projectCount));
+    // Отримання користувача за ID
+    public User getUserById(int id) {
+        String query = "SELECT * FROM Users WHERE id = ?";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return mapUser(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
+    }
 
-        return clients;
+    // Отримання активних користувачів
+    public List<User> getActiveUsers() {
+        String query = "SELECT * FROM Users WHERE status = 'active'";
+        return executeUserQuery(query);
+    }
+
+    // Отримання кількості користувачів
+    public int getUserCount() {
+        String query = "SELECT COUNT(*) AS userCount FROM Users";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            if (resultSet.next()) {
+                return resultSet.getInt("userCount");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Отримання клієнта з максимальною кількістю проектів
+    public MaxProjectCountClient findMaxProjectsClient() {
+        String query = "SELECT clientName, COUNT(*) AS projectCount " +
+                "FROM Projects " +
+                "GROUP BY clientName " +
+                "ORDER BY projectCount DESC " +
+                "LIMIT 1";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            if (resultSet.next()) {
+                String name = resultSet.getString("clientName");
+                int projectCount = resultSet.getInt("projectCount");
+                return new MaxProjectCountClient(name, projectCount);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Загальний метод для виконання запитів, що повертають список користувачів
+    private List<User> executeUserQuery(String query) {
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    // Метод для перетворення ResultSet у об'єкт User
+    private User mapUser(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getInt("id"));
+        user.setName(resultSet.getString("name"));
+        user.setStatus(resultSet.getString("status"));
+        return user;
     }
 }
