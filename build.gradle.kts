@@ -1,8 +1,9 @@
 plugins {
     id("java")
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
     id("application")
 }
+
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
@@ -23,7 +24,7 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(21)  // Зміни версію на 20
+    jvmToolchain(21)
 }
 
 

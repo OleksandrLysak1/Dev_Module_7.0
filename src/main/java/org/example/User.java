@@ -5,10 +5,8 @@ public class User {
     private String name;
     private String status;
 
-    // Конструктор
     public User() {}
 
-    // Геттери та сеттери
     public int getId() {
         return id;
     }

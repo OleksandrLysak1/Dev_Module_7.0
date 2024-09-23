@@ -9,13 +9,11 @@ public class DatabaseQueryService {
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 
-    // Отримання всіх користувачів
     public List<User> getAllUsers() {
         String query = "SELECT * FROM Users";
         return executeUserQuery(query);
     }
 
-    // Отримання користувача за ID
     public User getUserById(int id) {
         String query = "SELECT * FROM Users WHERE id = ?";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -31,18 +29,16 @@ public class DatabaseQueryService {
         return null;
     }
 
-    // Отримання активних користувачів
     public List<User> getActiveUsers() {
         String query = "SELECT * FROM Users WHERE status = 'active'";
         return executeUserQuery(query);
     }
 
-    // Отримання кількості користувачів
     public int getUserCount() {
         String query = "SELECT COUNT(*) AS userCount FROM Users";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 return resultSet.getInt("userCount");
             }
@@ -52,7 +48,7 @@ public class DatabaseQueryService {
         return 0;
     }
 
-    // Отримання клієнта з максимальною кількістю проектів
+
     public MaxProjectCountClient findMaxProjectsClient() {
         String query = "SELECT clientName, COUNT(*) AS projectCount " +
                 "FROM Projects " +
@@ -73,7 +69,6 @@ public class DatabaseQueryService {
         return null;
     }
 
-    // Загальний метод для виконання запитів, що повертають список користувачів
     private List<User> executeUserQuery(String query) {
         List<User> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -88,7 +83,6 @@ public class DatabaseQueryService {
         return users;
     }
 
-    // Метод для перетворення ResultSet у об'єкт User
     private User mapUser(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setId(resultSet.getInt("id"));
