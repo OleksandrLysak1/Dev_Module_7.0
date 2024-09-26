@@ -48,7 +48,6 @@ public class DatabaseQueryService {
         return 0;
     }
 
-
     public MaxProjectCountClient findMaxProjectsClient() {
         String query = "SELECT clientName, COUNT(*) AS projectCount " +
                 "FROM Projects " +
@@ -56,8 +55,8 @@ public class DatabaseQueryService {
                 "ORDER BY projectCount DESC " +
                 "LIMIT 1";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 String name = resultSet.getString("clientName");
                 int projectCount = resultSet.getInt("projectCount");
@@ -72,8 +71,8 @@ public class DatabaseQueryService {
     private List<User> executeUserQuery(String query) {
         List<User> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 users.add(mapUser(resultSet));
             }
