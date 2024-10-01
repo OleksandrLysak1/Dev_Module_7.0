@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -15,8 +16,8 @@ public class DatabaseInitService {
         try {
 
             String sql = new String(Files.readAllBytes(Paths.get("src/main/resources/sql/init_db.sql")));
-            try (Statement statement = connection.createStatement()) {
-                statement.execute(sql);
+            try (PreparedStatement preparedStatement = (PreparedStatement) connection.createStatement()) {
+                preparedStatement.execute(sql);
             }
         } catch (IOException | SQLException e) {
             e.printStackTrace();
